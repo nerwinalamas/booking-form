@@ -18,11 +18,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Settings, Calendar, FileText } from "lucide-react";
+import { User, Settings, CalendarIcon, FileText } from "lucide-react";
 import { useState } from "react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const serviceTypes: Record<string, string[]> = {
   plumbing: [
@@ -109,13 +117,13 @@ const formSchema = z.object({
   }),
 
   // Preferred Schedule
-  preferredDate: z.string().min(1, {
-    message: "Please select a preferred date.",
+  preferredDate: z.date({
+    error: "Please select a preferred date.",
   }),
   preferredTime: z.string().min(1, {
     message: "Please select a preferred time.",
   }),
-  alternativeDate: z.string().optional(),
+  alternativeDate: z.date().optional(),
   alternativeTime: z.string().optional(),
 
   // Additional Information
@@ -145,9 +153,7 @@ const BookingForm = () => {
       urgencyLevel: "",
       budgetRange: "",
       problemDescription: "",
-      preferredDate: "",
       preferredTime: "",
-      alternativeDate: "",
       alternativeTime: "",
       accessInstructions: "",
       specialRequests: "",
@@ -469,7 +475,7 @@ const BookingForm = () => {
           {/* Preferred Schedule */}
           <div className="pt-6 border-t">
             <div className="flex items-center gap-2 mb-6">
-              <Calendar className="w-5 h-5 text-orange-500" />
+              <CalendarIcon className="w-5 h-5 text-orange-500" />
               <h3 className="text-lg font-semibold">Preferred Schedule</h3>
             </div>
             <div className="space-y-6">
@@ -477,13 +483,40 @@ const BookingForm = () => {
                 control={form.control}
                 name="preferredDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>
                       Preferred Date <span className="text-red-500">*</span>
                     </FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "MMMM dd, yyyy")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date() || date < new Date("1900-01-01")
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -534,11 +567,38 @@ const BookingForm = () => {
                 control={form.control}
                 name="alternativeDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Alternative Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "MMMM dd, yyyy")
+                            ) : (
+                              <span>Pick an alternative date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date() || date < new Date("1900-01-01")
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
