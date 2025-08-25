@@ -182,7 +182,7 @@ const BookingForm = () => {
           {/* Client Information */}
           <div className="pt-6 border-t">
             <div className="flex items-center gap-2 mb-6">
-              <User className="w-5 h-5 text-orange-500" />
+              <User className="w-5 h-5 text-blue-600" />
               <h3 className="text-lg font-semibold">Client Information</h3>
             </div>
             <div className="space-y-6">
@@ -299,7 +299,7 @@ const BookingForm = () => {
           {/* Service Details */}
           <div className="pt-6 border-t">
             <div className="flex items-center gap-2 mb-6">
-              <Settings className="w-5 h-5 text-orange-500" />
+              <Settings className="w-5 h-5 text-blue-600" />
               <h3 className="text-lg font-semibold">Service Details</h3>
             </div>
             <div className="space-y-6">
@@ -475,7 +475,7 @@ const BookingForm = () => {
           {/* Preferred Schedule */}
           <div className="pt-6 border-t">
             <div className="flex items-center gap-2 mb-6">
-              <CalendarIcon className="w-5 h-5 text-orange-500" />
+              <CalendarIcon className="w-5 h-5 text-blue-600" />
               <h3 className="text-lg font-semibold">Preferred Schedule</h3>
             </div>
             <div className="space-y-6">
@@ -648,7 +648,7 @@ const BookingForm = () => {
           {/* Additional Information */}
           <div className="pt-6 border-t">
             <div className="flex items-center gap-2 mb-6">
-              <FileText className="w-5 h-5 text-orange-500" />
+              <FileText className="w-5 h-5 text-blue-600" />
               <h3 className="text-lg font-semibold">Additional Information</h3>
             </div>
             <div className="space-y-6">
