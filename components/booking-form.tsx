@@ -162,10 +162,48 @@ const BookingForm = () => {
     },
   });
 
-  const onSubmit = (values: FormData) => {
-    console.log("Form submitted:", values);
-    alert("Booking request submitted successfully!");
+  const onSubmit = async (values: FormData) => {
+    try {
+      const formattedData = {
+        ...values,
+        preferredDate: values.preferredDate
+          ? values.preferredDate.toISOString()
+          : null,
+        alternativeDate: values.alternativeDate
+          ? values.alternativeDate.toISOString()
+          : null,
+      };
+
+      console.log("Submitting data:", formattedData);
+
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(
+          "Booking request submitted successfully! We will contact you soon."
+        );
+        form.reset();
+        setSelectedServiceType("");
+      } else {
+        throw new Error(result.message || "Submission failed");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert(
+        "Error: There was an error submitting your request. Please try again."
+      );
+    }
   };
+
+  const isSubmitting = form.formState.isSubmitting;
 
   const handleServiceTypeChange = (value: string) => {
     setSelectedServiceType(value);
@@ -195,7 +233,11 @@ const BookingForm = () => {
                       Full Name <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Juan Dela Cruz" {...field} />
+                      <Input
+                        placeholder="Juan Dela Cruz"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -215,6 +257,7 @@ const BookingForm = () => {
                         type="tel"
                         placeholder="+63 912 345 6789"
                         {...field}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -235,6 +278,7 @@ const BookingForm = () => {
                         type="email"
                         placeholder="juan@example.com"
                         {...field}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -253,6 +297,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -287,6 +332,7 @@ const BookingForm = () => {
                         placeholder="Complete address including barangay, city, and landmarks"
                         className="min-h-[100px] resize-none"
                         {...field}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -314,6 +360,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={handleServiceTypeChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -351,7 +398,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      disabled={!selectedServiceType}
+                      disabled={!selectedServiceType || isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -386,6 +433,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -421,6 +469,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -463,6 +512,7 @@ const BookingForm = () => {
                         placeholder="Please describe the problem in detail, including when it started, what you've already tried, and any relevant information..."
                         className="min-h-[120px] resize-none"
                         {...field}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -496,6 +546,7 @@ const BookingForm = () => {
                               "w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
+                            disabled={isSubmitting}
                           >
                             {field.value ? (
                               format(field.value, "MMMM dd, yyyy")
@@ -533,6 +584,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -578,6 +630,7 @@ const BookingForm = () => {
                               "w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
+                            disabled={isSubmitting}
                           >
                             {field.value ? (
                               format(field.value, "MMMM dd, yyyy")
@@ -613,6 +666,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -663,6 +717,7 @@ const BookingForm = () => {
                         placeholder="How to access your property (gate codes, parking, building entrance, etc.)"
                         className="min-h-[80px] resize-none"
                         {...field}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -681,6 +736,7 @@ const BookingForm = () => {
                         placeholder="Any special requirements, tools needed, or specific requests..."
                         className="min-h-[80px] resize-none"
                         {...field}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -700,6 +756,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -727,6 +784,7 @@ const BookingForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={isSubmitting}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -756,8 +814,9 @@ const BookingForm = () => {
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700"
+            disabled={isSubmitting}
           >
-            Book Service
+            {isSubmitting ? "Submitting..." : "Book Service"}
           </Button>
         </form>
       </Form>
