@@ -19,7 +19,7 @@ export const formSchema = z.object({
   propertyType: z.string().min(1, {
     message: "Please select a property type.",
   }),
-  serviceAddress: z.string().min(10, {
+  serviceAddress: z.string().min(1, {
     message:
       "Please provide a complete address including barangay, city, and landmarks.",
   }),
@@ -35,7 +35,7 @@ export const formSchema = z.object({
     message: "Please select an urgency level.",
   }),
   budgetRange: z.string().optional(),
-  problemDescription: z.string().min(10, {
+  problemDescription: z.string().min(1, {
     message: "Please provide a detailed problem description.",
   }),
 
