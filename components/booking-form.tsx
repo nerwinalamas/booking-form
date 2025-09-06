@@ -103,6 +103,8 @@ const BookingForm = () => {
   };
 
   const isSubmitting = form.formState.isSubmitting;
+  const serviceType = form.watch("serviceType");
+  const preferredDate = form.watch("preferredDate");
 
   const handleServiceTypeChange = (value: string) => {
     setSelectedServiceType(value);
@@ -150,6 +152,28 @@ const BookingForm = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const isAlternativeDateDisabled = (date: Date) => {
+    if (date < new Date() || date < new Date("1900-01-01")) {
+      return true;
+    }
+
+    if (preferredDate) {
+      const preferredDateOnly = new Date(
+        preferredDate.getFullYear(),
+        preferredDate.getMonth(),
+        preferredDate.getDate()
+      );
+      const dateOnly = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+      return dateOnly <= preferredDateOnly;
+    }
+
+    return false;
   };
 
   return (
@@ -374,7 +398,13 @@ const BookingForm = () => {
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select specific service" />
+                            <SelectValue
+                              placeholder={
+                                serviceType
+                                  ? "Select specific service"
+                                  : "Select service type first"
+                              }
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -556,6 +586,15 @@ const BookingForm = () => {
                             onSelect={(date) => {
                               field.onChange(date);
                               form.trigger("preferredDate");
+                              const alternativeDate =
+                                form.getValues("alternativeDate");
+                              if (
+                                alternativeDate &&
+                                date &&
+                                alternativeDate <= date
+                              ) {
+                                form.setValue("alternativeDate", undefined);
+                              }
                             }}
                             disabled={(date) =>
                               date < new Date() || date < new Date("1900-01-01")
@@ -628,12 +667,16 @@ const BookingForm = () => {
                                 "w-full pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground"
                               )}
-                              disabled={isSubmitting}
+                              disabled={isSubmitting || !preferredDate}
                             >
                               {field.value ? (
                                 format(field.value, "MMMM dd, yyyy")
                               ) : (
-                                <span>Pick an alternative date</span>
+                                <span>
+                                  {preferredDate
+                                    ? "Pick an alternative date"
+                                    : "Select preferred date first"}
+                                </span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -647,9 +690,7 @@ const BookingForm = () => {
                               field.onChange(date);
                               form.trigger("alternativeDate");
                             }}
-                            disabled={(date) =>
-                              date < new Date() || date < new Date("1900-01-01")
-                            }
+                            disabled={isAlternativeDateDisabled}
                           />
                         </PopoverContent>
                       </Popover>
